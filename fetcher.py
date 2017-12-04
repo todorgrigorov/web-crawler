@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 import requests
-from not_found_exception import NotFoundException
+from exceptions import NotFoundException
 
 
 class Fetcher:

@@ -1,5 +1,5 @@
 import signal
-from timeout_exception import TimeoutException
+from exceptions import TimeoutException
 
 
 class Timeout:

@@ -28,6 +28,7 @@ class Document:
         self.links = []
         self.crawled_links = []
         self.tokens = []
+        self.valid = True
 
     def __eq__(self, other):
         return self.url == other.url or self.guid == other.guid

@@ -5,10 +5,10 @@ from document import Document
 from requests.exceptions import InvalidSchema
 from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
-from not_found_exception import NotFoundException
-from syntax_exception import SyntaxException
+from exceptions import NotFoundException
+from exceptions import SyntaxException
 from termcolor import colored
-from timeout_exception import TimeoutException
+from exceptions import TimeoutException
 
 
 class Crawler:
@@ -20,6 +20,7 @@ class Crawler:
         self.fetcher = Fetcher()
         self.tree = Tree()
         self.documents = []
+        self.invalid_documents = []
 
     def get_document_by_guid(self, guid):
         for document in self.documents:
@@ -46,7 +47,8 @@ class Crawler:
                 # the depth increases with each subsequent crawl call
                 if current_depth <= Crawler.MAX_DEPTH:
                     for link in parser.document.links:
-                        if Document(link) not in self.documents:
+                        document = Document(link)
+                        if document not in self.documents and document not in self.invalid_documents:
                             # NOTE: this is not 100% guarantee that the same document will not be crawled again,
                             #       as there are many ways to forward DNS to the same page...
                             self.crawl(link, current_depth + 1)
@@ -54,26 +56,26 @@ class Crawler:
                             # if crawling has been successful, then append the link as crawled
                             parser.document.crawled_links.append(link)
             except (MissingSchema, InvalidSchema):
-                print(colored('Invalid URL specified.', 'red'))
-                print('URL: %s' % (url))
-                print('\n')
+                self.handle_invalid_url(url, 'Invalid URL specified.')
             except NotFoundException:
-                print(colored('Document not found.', 'red'))
-                print('URL: %s' % (url))
-                print('\n')
+                self.handle_invalid_url(url, 'Document not found.')
             except ConnectionError:
-                print(colored('Error while crawling document.', 'red'))
-                print('URL: %s' % (url))
-                print('\n')
+                self.handle_invalid_url(url, 'Error while crawling document.')
             except (SyntaxException, RecursionError):
-                print(colored('Error while parsing document.', 'red'))
-                print('URL: %s' % (url))
-                print('\n')
+                self.handle_invalid_url(url, 'Error while parsing document.')
             except TimeoutException:
-                print(colored('Document took too long to process.', 'red'))
-                print('URL: %s' % (url))
-                print('\n')
+                self.handle_invalid_url(
+                    url, 'Document took too long to process.')
         else:
-            print(colored('Invalid URL specified.', 'red'))
-            print('URL: %s' % (url))
-            print('\n')
+            self.handle_invalid_url(url, 'Invalid URL specified.')
+
+    def handle_invalid_url(self, url, message):
+        document = Document(url)
+        document.valid = False
+
+        if document not in self.invalid_documents:
+            self.invalid_documents.append(document)
+
+        print(colored(message, 'red'))
+        print('URL: %s' % (url))
+        print('\n')
