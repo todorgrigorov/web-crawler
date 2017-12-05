@@ -22,17 +22,20 @@ class Parser:
         self.symbol_position = 0
 
     def parse(self):
+        analyzed = False
         with Timeout(Parser.MAX_ANALYZE_TIMEOUT):
             # stop if the analyze takes too long
             self.analyzer.analyze()
+            analyzed = True
 
-        for symbol in self.analyzer.symbols:
-            if symbol.type == SymbolType.PLAIN_TEXT:
-                self.extract_text(symbol.content)
-            elif symbol.type == SymbolType.META:
-                self.extract_meta(symbol)
-            elif symbol.type == SymbolType.A_START:
-                self.extract_link(symbol)
+        if analyzed:
+            for symbol in self.analyzer.symbols:
+                if symbol.type == SymbolType.PLAIN_TEXT:
+                    self.extract_text(symbol.content)
+                elif symbol.type == SymbolType.META:
+                    self.extract_meta(symbol)
+                elif symbol.type == SymbolType.A_START:
+                    self.extract_link(symbol)
 
     def is_punctuation(self, char):
         return char == '?' or char == '!' or char == '.' or char == ',' or char == '-' or char == ':'

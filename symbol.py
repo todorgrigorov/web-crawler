@@ -95,3 +95,7 @@ class Symbol:
 
     def is_empty(self):
         return not self.name and not self.content and self.type == SymbolType.UNKNOWN
+
+    @staticmethod
+    def empty():
+        return Symbol()

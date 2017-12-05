@@ -44,6 +44,11 @@ class Analyzer:
         else:
             symbol = self.tokenizer.get_next_symbol()
 
+            # do not add symbols until a start of the document has been reached
+            # the start it represented as DOCTYPE tag
+            if symbol.type != SymbolType.DOCTYPE:
+                symbol = Symbol.empty()
+
         if not symbol.is_empty():
             # might be empty when the end of the HTML has been reached
             self.symbols.append(symbol)

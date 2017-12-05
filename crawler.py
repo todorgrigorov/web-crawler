@@ -14,7 +14,7 @@ from exceptions import TimeoutException
 class Crawler:
     """ Scans through websites via HTTP GET requests and recursion.  """
 
-    MAX_DEPTH = 1
+    MAX_DEPTH = 10
 
     def __init__(self):
         self.fetcher = Fetcher()

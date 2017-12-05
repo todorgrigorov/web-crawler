@@ -32,7 +32,7 @@ def main():
                 print('\n')
                 print(colored(document.url, 'blue'))
 
-                for link in document.crawled_links:
+                for link in document.links:
                     print(colored(link, 'cyan'))
 
         while True:

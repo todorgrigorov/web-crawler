@@ -50,7 +50,7 @@ class Tokenizer:
                 elif next_char == '/':
                     self.scanner.skip_to_char('/')
                 else:
-                    self.scanner.skip_to_letter()
+                    self.scanner.skip_to_letter_or_digit()
 
                 while self.scanner.can_seek() and not self.is_quote() and not self.is_close_tag():
                     attribute_value += self.scanner.char

@@ -29,6 +29,13 @@ class Scanner:
         while self.can_seek() and not self.char.isalpha() and self.char != '>':
             self.set_next_char()
 
+    def skip_to_letter_or_digit(self):
+        while (self.can_seek() and not
+               self.char.isalpha() and not
+               self.char.isdigit() and
+               self.char != '>'):
+            self.set_next_char()
+
     def skip_to_char(self, char):
         while self.can_seek() and self.char.upper() != char.upper() and self.char != '>':
             self.set_next_char()
